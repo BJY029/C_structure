@@ -1,0 +1,70 @@
+#pragma warning (disable:4996)
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct node {
+	int id, data;
+	struct node *left, *right;
+}node;
+
+node *mallocing(node *q);
+
+int main() {
+	node *TREE = NULL;
+	node *newn = NULL;
+
+	//트리 연결
+	newn = mallocing(newn);
+	newn->data = 20;
+	newn->id = 1;
+	newn->left = mallocing(newn->left);
+	newn->right = mallocing(newn->right);
+	TREE = newn;
+
+	newn->left->data = 30;
+	newn->left->id = 2;
+	newn->left->left = mallocing(newn->left->left);
+	newn->left->right = mallocing(newn->left->right);
+
+	newn->left->left->data = 70;
+	newn->left->left->id = 4;
+	newn->left->left->left = NULL;
+	newn->left->left->right = NULL;
+
+	newn->left->right->data = 90;
+	newn->left->right->id = 5;
+	newn->left->right->left = NULL;
+	newn->left->right->right = NULL;
+
+	newn->right->data = 50;
+	newn->right->id = 3;
+	newn->right->left = NULL;
+	newn->right->right = mallocing(newn->right->right);
+
+	newn->right->right->data = 120;
+	newn->right->right->id = 6;
+	newn->right->right->left = mallocing(newn->right->right->left);
+	newn->right->right->right = mallocing(newn->right->right->right);
+
+	newn->right->right->left->data = 130;
+	newn->right->right->left->id = 7;
+	newn->right->right->left->left = NULL;
+	newn->right->right->left->right = NULL;
+
+	newn->right->right->right->data = 80;
+	newn->right->right->right->id = 8;
+	newn->right->right->right->left = NULL;
+	newn->right->right->right->right = NULL;
+
+	int method, id;
+	scanf("%d %d", &method, &id);
+
+
+
+}
+
+node *mallocing(node *q) {
+	q = (node *)malloc(sizeof(node));
+	return q;
+}
