@@ -1,0 +1,226 @@
+#pragma warning (disable:4996)
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct node {
+	int id, data;
+	struct node *left, *right;
+}node;
+
+typedef struct queue {
+	int id;
+	struct queue *next;
+	struct node *id_address;
+}queue;
+
+node *mallocing(node *q);
+void frontTour(node **root, int id);
+void reFront(node **standard);
+void middleTour(node **root, int id);
+void reMiddle(node *standard);
+void rearTour(node** root, int id);
+void reRear(node *standard);
+
+node *findingIdx(node *root, int id);
+void Input(queue **f, queue **r, node *Me);
+node* Delete(queue **f, queue **r, int id);
+void freeing(queue *f);
+
+int main() {
+	node *TREE = NULL;
+	node *newn = NULL;
+
+
+	//트리 초기화 및 연결
+	newn = mallocing(newn);
+	newn->data = 20;
+	newn->id = 1;
+	newn->left = mallocing(newn->left);
+	newn->right = mallocing(newn->right);
+	TREE = newn;
+
+	newn->left->data = 30;
+	newn->left->id = 2;
+	newn->left->left = mallocing(newn->left->left);
+	newn->left->right = mallocing(newn->left->right);
+
+	newn->left->left->data = 70;
+	newn->left->left->id = 4;
+	newn->left->left->left = NULL;
+	newn->left->left->right = NULL;
+
+	newn->left->right->data = 90;
+	newn->left->right->id = 5;
+	newn->left->right->left = NULL;
+	newn->left->right->right = NULL;
+
+	newn->right->data = 50;
+	newn->right->id = 3;
+	newn->right->left = NULL;
+	newn->right->right = mallocing(newn->right->right);
+
+	newn->right->right->data = 120;
+	newn->right->right->id = 6;
+	newn->right->right->left = mallocing(newn->right->right->left);
+	newn->right->right->right = mallocing(newn->right->right->right);
+
+	newn->right->right->left->data = 130;
+	newn->right->right->left->id = 7;
+	newn->right->right->left->left = NULL;
+	newn->right->right->left->right = NULL;
+
+	newn->right->right->right->data = 80;
+	newn->right->right->right->id = 8;
+	newn->right->right->right->left = NULL;
+	newn->right->right->right->right = NULL;
+
+	int method, id;
+	scanf("%d %d", &method, &id);
+
+	if (method == 1) {
+		frontTour(&TREE, id);
+	}
+	else if (method == 2) {
+		middleTour(&TREE, id);
+	}
+	else if (method == 3) {
+		rearTour(&TREE, id);
+	}
+
+
+	//free 구현하기
+	return 0;
+
+}
+
+node *mallocing(node *q) {
+	q = (node *)malloc(sizeof(node));
+	return q;
+}
+
+void frontTour(node **root, int id) {
+	node *standard = NULL;
+
+	standard = findingIdx(*root, id);
+	if (standard == NULL) {
+		printf("-1\n");
+	}
+	else {
+		reFront(&standard);
+		printf("\n");
+	}
+}
+
+void reFront(node **standard) {
+	printf(" %d", (*standard)->data);
+	if ((*standard)->left != NULL) reFront(&((*standard)->left));
+	if ((*standard)->right != NULL) reFront(&((*standard)->right));
+}
+
+void middleTour(node **root, int id) {
+	node *standard = NULL;
+
+	standard = findingIdx(*root, id);
+	if (standard == NULL) {
+		printf("-1\n");
+	}
+	else {
+		reMiddle(standard);
+		printf("\n");
+	}
+}
+
+void reMiddle(node *standard) {
+	if (standard->left != NULL) reMiddle(standard->left);
+	printf(" %d", standard->data);
+	if (standard->right != NULL) reMiddle(standard->right);
+}
+
+void rearTour(node **root, int id) {
+	node *standard = NULL;
+
+	standard = findingIdx(*root, id);
+	if (standard == NULL) {
+		printf("-1\n");
+	}
+	else {
+		reRear(standard);
+		printf("\n");
+	}
+}
+void reRear(node *standard) {
+	if (standard->left != NULL) reRear(standard->left);
+	if (standard->right != NULL) reRear(standard->right);
+	printf(" %d", standard->data);
+}
+
+
+node *findingIdx(node *root, int id) {
+	queue *front, *rear, *Me;
+	front = NULL, rear = NULL, Me = NULL;
+	node *v = NULL;
+
+	Input(&front, &rear, root);
+	while (front != NULL &&rear != NULL) {
+		v = Delete(&front, &rear,id);
+		if (v->id == id) {
+			freeing(front);
+			return v;
+		}
+		if (v->left != NULL) 
+			Input(&front, &rear, v->left);
+		if(v->right != NULL)
+			Input(&front, &rear, v->right);
+	}
+	freeing(front);
+	return NULL;
+}
+
+
+void Input(queue **f, queue **r, node *Me) {
+	queue *p = *r;
+	queue *newn = (queue *)malloc(sizeof(queue));
+	newn->id = Me->id;
+	newn->id_address = Me;
+	newn->next = NULL;
+
+	if (*r == NULL) {
+		*r = newn;
+		*f = newn;
+	}
+	else {
+		p->next = newn;
+		*r = newn;
+	}
+}
+
+node* Delete(queue **f, queue **r, int id) {
+	queue *p = *f;
+	node *isIt = NULL;
+	int x = -1;
+
+	if (*f == NULL) {
+		printf("Empty Que\n");
+	}
+	else {
+		queue *current = p;
+		x = current->id;
+		isIt = current->id_address;
+		*f = p->next;
+		free(current);
+
+		if (*f == NULL) *r = NULL;
+	}
+	return isIt;
+}
+
+void freeing(queue *f) {
+	queue *Current = f;
+
+	while (Current) {
+		queue *next = Current->next;
+		free(Current);
+		Current = next;
+	}
+}
